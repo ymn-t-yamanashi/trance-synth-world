@@ -1,10 +1,29 @@
 import { SpawnPoint } from '@xrift/world-components'
-import { RigidBody } from '@react-three/rapier'
+import { CuboidCollider, RigidBody } from '@react-three/rapier'
 import { Text } from '@react-three/drei'
 import { SynthConsole } from './components/Synth/SynthConsole'
 import { TranceAudioProvider } from './components/Synth/TranceAudio'
 import { TranceStage } from './components/Synth/TranceStage'
 import { DancerEnsemble } from './components/Synth/DancerEnsemble'
+
+const ENCLOSURE_COLLIDERS: Array<{
+  position: [number, number, number]
+  halfExtents: [number, number, number]
+}> = [
+  { position: [-11.7, 4.45, -4.3], halfExtents: [0.17, 4.5, 12.2] },
+  { position: [11.7, 4.45, -4.3], halfExtents: [0.17, 4.5, 12.2] },
+  { position: [0, 3.15, -13.35], halfExtents: [12, 5, 0.125] },
+  { position: [0, 4.45, 7.65], halfExtents: [11.7, 4.5, 0.17] },
+  { position: [0, 8.2, -4.5], halfExtents: [11.7, 0.08, 12] },
+]
+
+function EnclosureColliders() {
+  return ENCLOSURE_COLLIDERS.map(({ position, halfExtents }, index) => (
+    <RigidBody key={index} type="fixed" colliders={false} position={position} restitution={0} friction={0.75}>
+      <CuboidCollider args={halfExtents} />
+    </RigidBody>
+  ))
+}
 
 function PerformanceDeck() {
   return (
@@ -57,6 +76,7 @@ function Venue() {
           <meshBasicMaterial transparent opacity={0} />
         </mesh>
       </RigidBody>
+      <EnclosureColliders />
 
       {[-11.7, 11.7].map((x, index) => (
         <group key={x} position={[x, 4.45, -4.3]}>
