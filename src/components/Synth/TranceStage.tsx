@@ -6,7 +6,7 @@ import { readAudioLevel, useTranceAudio } from './TranceAudio'
 
 const TRANCE_GREEN = '#62ff63'
 
-function SoftLightAtmosphere() {
+function useSoftGlowTexture() {
   const texture = useMemo(() => {
     const canvas = document.createElement('canvas')
     canvas.width = 128
@@ -26,16 +26,29 @@ function SoftLightAtmosphere() {
   }, [])
 
   useEffect(() => () => texture.dispose(), [texture])
+  return texture
+}
+
+function SoftLightAtmosphere() {
+  const texture = useSoftGlowTexture()
 
   return (
     <>
       <mesh position={[0, -0.035, -6.5]} rotation={[-Math.PI / 2, 0, 0]}>
         <planeGeometry args={[27, 20]} />
-        <meshBasicMaterial map={texture} color={TRANCE_GREEN} transparent opacity={0.24} depthWrite={false} side={THREE.DoubleSide} blending={THREE.AdditiveBlending} toneMapped={false} />
+        <meshBasicMaterial map={texture} color={TRANCE_GREEN} transparent opacity={0.14} depthWrite={false} side={THREE.DoubleSide} blending={THREE.AdditiveBlending} toneMapped={false} />
       </mesh>
       <mesh position={[0, 3.4, -13.12]}>
         <planeGeometry args={[23, 8]} />
-        <meshBasicMaterial map={texture} color="#82ff70" transparent opacity={0.19} depthWrite={false} blending={THREE.AdditiveBlending} toneMapped={false} />
+        <meshBasicMaterial map={texture} color="#82ff70" transparent opacity={0.11} depthWrite={false} blending={THREE.AdditiveBlending} toneMapped={false} />
+      </mesh>
+      <mesh position={[-11.51, 4.45, -4.3]} rotation={[0, Math.PI / 2, 0]}>
+        <planeGeometry args={[23.8, 8.7]} />
+        <meshBasicMaterial map={texture} color="#55e874" transparent opacity={0.2} depthWrite={false} side={THREE.DoubleSide} blending={THREE.AdditiveBlending} toneMapped={false} />
+      </mesh>
+      <mesh position={[11.51, 4.45, -4.3]} rotation={[0, -Math.PI / 2, 0]}>
+        <planeGeometry args={[23.8, 8.7]} />
+        <meshBasicMaterial map={texture} color="#55e874" transparent opacity={0.2} depthWrite={false} side={THREE.DoubleSide} blending={THREE.AdditiveBlending} toneMapped={false} />
       </mesh>
     </>
   )
@@ -95,7 +108,7 @@ function SweepingBeams() {
       if (spotlight) {
         const target = targetRefs.current[index]
         if (target && spotlight.target !== target) spotlight.target = target
-        spotlight.intensity = 55 + level * 62 + pulse * 80
+        spotlight.intensity = 6 + level * 12 + pulse * 14
         spotlight.angle = 0.25 + level * 0.055 + pulse * 0.025
       }
     })
@@ -120,7 +133,7 @@ function SweepingBeams() {
             ref={(light) => { spotlightRefs.current[index] = light }}
             position={[0, 3.3, 0]}
             color={TRANCE_GREEN}
-            intensity={55}
+            intensity={6}
             distance={22}
             angle={0.28}
             penumbra={0.86}
@@ -207,8 +220,8 @@ function PulseStage() {
     }
     const screenMaterial = innerScreenRef.current?.material as THREE.MeshStandardMaterial | undefined
     const rearMaterial = rearScreenRef.current?.material as THREE.MeshStandardMaterial | undefined
-    if (screenMaterial) screenMaterial.emissiveIntensity = 1.1 + pulse * 3.5
-    if (rearMaterial) rearMaterial.emissiveIntensity = 0.55 + pulse * 0.75
+    if (screenMaterial) screenMaterial.emissiveIntensity = 0.35 + pulse * 0.65
+    if (rearMaterial) rearMaterial.emissiveIntensity = 0.22 + pulse * 0.3
   })
 
   return (
@@ -232,11 +245,11 @@ function PulseStage() {
         </mesh>
         <mesh position={[0, 0, 0.08]}>
           <circleGeometry args={[2.56, 96]} />
-          <meshBasicMaterial color="#132719" transparent opacity={0.74} side={THREE.DoubleSide} />
+          <meshBasicMaterial color="#08130a" transparent opacity={0.56} side={THREE.DoubleSide} />
         </mesh>
         <mesh ref={innerScreenRef} position={[0, 0, 0.11]}>
           <circleGeometry args={[2.25, 96]} />
-          <meshStandardMaterial color="#101d13" emissive="#1b5127" emissiveIntensity={1.1} metalness={0.5} roughness={0.36} side={THREE.DoubleSide} />
+          <meshStandardMaterial color="#09110a" emissive="#102718" emissiveIntensity={0.35} metalness={0.5} roughness={0.36} side={THREE.DoubleSide} />
         </mesh>
         <Text position={[0, 0.35, 0.24]} fontSize={0.62} color="#a8ffad" anchorX="center" anchorY="middle" material-toneMapped={false} outlineWidth={0.008} outlineColor="#7eff82">
           EUPHORIA
@@ -248,13 +261,15 @@ function PulseStage() {
 
       <mesh position={[0, 2.45, -12.65]} ref={rearScreenRef}>
         <boxGeometry args={[12.4, 3.5, 0.38]} />
-        <meshStandardMaterial color="#050905" emissive="#123219" emissiveIntensity={0.55} metalness={0.04} roughness={0.92} />
+        <meshStandardMaterial color="#030603" emissive="#0b1c10" emissiveIntensity={0.22} metalness={0.04} roughness={0.92} />
       </mesh>
     </>
   )
 }
 
 function StageArchitecture() {
+  const glowTexture = useSoftGlowTexture()
+
   return (
     <>
       <mesh position={[0, 0.19, -9.3]} castShadow receiveShadow>
@@ -282,12 +297,12 @@ function StageArchitecture() {
           {[0, 1, 2].map((row) => (
             <mesh key={row} position={[0, row * 0.78, 0]} castShadow>
               <boxGeometry args={[1.25 - row * 0.1, 0.72, 0.72]} />
-              <meshStandardMaterial color={row === 0 ? '#151b15' : '#1c241b'} metalness={0.34} roughness={0.48} />
+              <meshStandardMaterial color={row === 0 ? '#050705' : '#080b09'} metalness={0.12} roughness={0.78} />
             </mesh>
           ))}
           <mesh position={[side === 0 ? 0.635 : -0.635, 0.78, 0]}>
             <boxGeometry args={[0.028, 2.6, 0.8]} />
-            <meshBasicMaterial color="#55f26a" toneMapped={false} />
+            <meshBasicMaterial map={glowTexture} color="#55e874" transparent opacity={0.34} depthWrite={false} side={THREE.DoubleSide} blending={THREE.AdditiveBlending} toneMapped={false} />
           </mesh>
         </group>
       ))}
@@ -353,14 +368,16 @@ export function TranceStage() {
       <SweepingBeams />
       <LaserFan origin={[-4.2, 6.1, -10.9]} color={TRANCE_GREEN} phase={0.2} />
       <LaserFan origin={[4.2, 6.1, -10.9]} color={TRANCE_GREEN} phase={2.1} />
-      <ambientLight intensity={0.26} color="#62ff70" />
-      <hemisphereLight args={['#62ff70', '#173c20', 0.52]} />
-      <directionalLight position={[-5, 8, 5]} intensity={0.48} color="#62ff70" />
-      <pointLight position={[-7, 4.5, -7]} intensity={34} distance={15} color={TRANCE_GREEN} />
-      <pointLight position={[7, 4.5, -7]} intensity={34} distance={15} color={TRANCE_GREEN} />
-      <pointLight position={[0, 5.5, -11]} intensity={24} distance={18} color={TRANCE_GREEN} />
-      <pointLight position={[-7.8, 1.4, -6.5]} intensity={7} distance={17} color="#6cff75" />
-      <pointLight position={[7.8, 1.4, -6.5]} intensity={7} distance={17} color="#6cff75" />
+      <ambientLight intensity={0.12} color="#62ff70" />
+      <hemisphereLight args={['#62ff70', '#102416', 0.24]} />
+      <directionalLight position={[-5, 8, 5]} intensity={0.2} color="#62ff70" />
+      <pointLight position={[-7, 4.5, -7]} intensity={2.2} distance={15} color={TRANCE_GREEN} />
+      <pointLight position={[7, 4.5, -7]} intensity={2.2} distance={15} color={TRANCE_GREEN} />
+      <pointLight position={[0, 5.5, -11]} intensity={3} distance={18} color={TRANCE_GREEN} />
+      <pointLight position={[-7.8, 1.4, -6.5]} intensity={1} distance={17} color="#6cff75" />
+      <pointLight position={[7.8, 1.4, -6.5]} intensity={1} distance={17} color="#6cff75" />
+      <pointLight position={[-10.5, 2.6, -4.3]} intensity={1.8} distance={9} decay={2} color="#38ac50" />
+      <pointLight position={[10.5, 2.6, -4.3]} intensity={1.8} distance={9} decay={2} color="#38ac50" />
     </>
   )
 }

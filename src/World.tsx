@@ -78,17 +78,11 @@ function Venue() {
       </RigidBody>
       <EnclosureColliders />
 
-      {[-11.7, 11.7].map((x, index) => (
-        <group key={x} position={[x, 4.45, -4.3]}>
-          <mesh>
-            <boxGeometry args={[0.34, 9, 24.4]} />
-            <meshBasicMaterial color="#010201" toneMapped={false} />
-          </mesh>
-          <mesh position={[index === 0 ? 0.18 : -0.18, 0, 0]}>
-            <boxGeometry args={[0.04, 8.7, 23.8]} />
-            <meshBasicMaterial color="#35a94c" transparent opacity={0.36} toneMapped={false} />
-          </mesh>
-        </group>
+      {[-11.7, 11.7].map((x) => (
+        <mesh key={x} position={[x, 4.45, -4.3]}>
+          <boxGeometry args={[0.34, 9, 24.4]} />
+          <meshBasicMaterial color="#010201" toneMapped={false} />
+        </mesh>
       ))}
       <mesh position={[0, 8.2, -4.5]}>
         <boxGeometry args={[23.4, 0.16, 24]} />
